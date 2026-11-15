@@ -266,6 +266,16 @@ main,
   line-height: 1;
 }
 
+.price-prefix {
+  display: block;
+  font-size: 0.32em;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 0.35em;
+  color: var(--muted);
+}
+
 .hero-figure {
   margin: 0;
   position: relative;
@@ -543,6 +553,13 @@ main,
   font-size: 0.78rem;
   letter-spacing: 0.04em;
   color: var(--muted);
+}
+
+.color-price {
+  margin: 0.25rem 0 0;
+  font-size: 0.92rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
 }
 
 .color-card-hero .color-status { color: var(--accent); font-weight: 600; }

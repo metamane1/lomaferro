@@ -7,10 +7,27 @@
   var copyBtn = document.getElementById("copy-note");
   var totalEl = document.getElementById("order-total");
   var payLink = document.getElementById("pay-link");
+  var pickupMeta = document.getElementById("pickup-meta");
+  var shipMeta = document.getElementById("ship-meta");
   var basePay = "https://cash.app/$movecash2020";
+  var SHIPPING_CENTS = 900;
 
   function selected(name) {
     return form.querySelector('input[name="' + name + '"]:checked');
+  }
+
+  function formatMoney(cents) {
+    return "$" + (cents / 100).toFixed(2);
+  }
+
+  function pickupCents(color) {
+    var raw = color && color.getAttribute("data-pickup-cents");
+    var n = raw ? parseInt(raw, 10) : NaN;
+    return isFinite(n) ? n : 0;
+  }
+
+  function cashAppAmount(cents) {
+    return (cents / 100).toFixed(2);
   }
 
   function noteText() {
@@ -29,26 +46,38 @@
   }
 
   function sync() {
+    var color = selected("color");
     var delivery = selected("delivery");
     var shipping = delivery && delivery.value === "ship";
+    var pickup = pickupCents(color);
+    var shipped = pickup + SHIPPING_CENTS;
     addressField.hidden = !shipping;
     if (!shipping) addressInput.value = addressInput.value;
     noteEl.textContent = noteText();
 
-    if (!delivery) {
+    if (color && pickup) {
+      pickupMeta.textContent = formatMoney(pickup);
+      shipMeta.textContent = formatMoney(shipped) + " total · " + formatMoney(pickup) + " + $9 USPS";
+    } else {
+      pickupMeta.textContent = "From $19.99";
+      shipMeta.textContent = "From $28.99 total · tray + $9 USPS";
+    }
+
+    if (!delivery || !pickup) {
       totalEl.textContent = "Choose pickup or shipping to see your total.";
       payLink.href = basePay;
       payLink.classList.add("is-disabled");
       payLink.setAttribute("aria-disabled", "true");
       return;
     }
-    var total = delivery.getAttribute("data-total");
+
+    var total = shipping ? shipped : pickup;
     if (delivery.value === "pickup") {
-      totalEl.textContent = "Total: $25 for local pickup in Austin.";
+      totalEl.textContent = "Total: " + formatMoney(total) + " for local pickup in Austin.";
     } else {
-      totalEl.textContent = "Total: $34 shipped in the lower 48 ($25 plus $9 USPS).";
+      totalEl.textContent = "Total: " + formatMoney(total) + " shipped in the lower 48 (" + formatMoney(pickup) + " plus $9 USPS).";
     }
-    payLink.href = basePay + "/" + total;
+    payLink.href = basePay + "/" + cashAppAmount(total);
     payLink.classList.remove("is-disabled");
     payLink.setAttribute("aria-disabled", "false");
   }

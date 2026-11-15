@@ -4,13 +4,13 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Lomaferro — Rolling Tray with Built-In Ash Tray, Austin, TX</title>
-  <meta name="description" content="The Lomaferro Rolling Tray: a rolling tray for legal tobacco and herbal blends, with a built-in ash tray, made in Austin, Texas. $25 local pickup, or $34 shipped in the lower 48. Purple Galaxy, Black, and White are in stock; other colors are made to order.">
+  <meta name="description" content="The Lomaferro Rolling Tray: a rolling tray for legal tobacco and herbal blends, with a built-in ash tray, made in Austin, Texas. Starting at $19.99 local pickup, or $28.99 shipped in the lower 48. Purple Galaxy, Black, and White are in stock; other colors are made to order.">
   <meta name="theme-color" content="#07060c">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="assets/fonts.css">
   <link rel="stylesheet" href="styles.css">
   <meta property="og:title" content="Lomaferro — Rolling Tray with Built-In Ash Tray, Austin, TX">
-  <meta property="og:description" content="Roll. Rest. Ash. All in one tray. $25 local pickup in Austin, or $34 shipped in the lower 48.">
+  <meta property="og:description" content="Roll. Rest. Ash. All in one tray. Starting at $19.99 local pickup in Austin, or $28.99 shipped in the lower 48.">
   <meta property="og:type" content="website">
   <meta property="og:image" content="assets/images/tray-top-1200.jpg">
   <link rel="preload" as="image" href="assets/images/tray-top-1200.webp" type="image/webp">
@@ -52,7 +52,7 @@
         </h1>
         <p class="hero-tag">The rolling tray for legal tobacco and herbal blends, with a built-in ash tray.</p>
         <div class="hero-cta">
-          <p class="price">$25</p>
+          <p class="price"><span class="price-prefix">Starting at</span> $19.99</p>
           <a class="btn" href="#order">Order</a>
         </div>
       </div>
@@ -126,7 +126,7 @@
       <div class="product-info">
         <p class="eyebrow">The Tray</p>
         <h2 id="product-heading">Lomaferro Rolling Tray</h2>
-        <p class="price">$25</p>
+        <p class="price"><span class="price-prefix">Starting at</span> $19.99</p>
         <p class="availability">Purple Galaxy, Black, and White are in stock now and ready for local pickup in Austin, or ship in 1 to 3 days. Other colors are made to order.</p>
         <p class="lede">Stop rolling on magazines and losing ash on the table. The Lomaferro Rolling Tray gives you a big, flat rolling area with raised walls that keep everything contained, plus a built-in ash tray and a side well right beside it. One tray, no mess, made in Austin.</p>
         <dl class="dims">
@@ -188,6 +188,7 @@
           <div class="color-copy">
             <h3>Purple Galaxy</h3>
             <p class="color-status">In stock · Ships in 1 to 3 days</p>
+            <p class="color-price">$24.99 pickup · $33.99 shipped</p>
             <p>Deep violet with a soft, satiny sheen. The tray as it looks today.</p>
           </div>
         </article>
@@ -195,21 +196,25 @@
           <div class="swatch swatch-glow" aria-hidden="true"></div>
           <h3>Glow Green</h3>
           <p class="color-status">Made to order · 5–7 days</p>
+          <p class="color-price">$24.99 pickup · $33.99 shipped</p>
         </article>
         <article class="color-card">
           <div class="swatch swatch-black" aria-hidden="true"></div>
           <h3>Black</h3>
           <p class="color-status">In stock · Ships in 1 to 3 days</p>
+          <p class="color-price">$19.99 pickup · $28.99 shipped</p>
         </article>
         <article class="color-card">
           <div class="swatch swatch-white" aria-hidden="true"></div>
           <h3>White</h3>
           <p class="color-status">In stock · Ships in 1 to 3 days</p>
+          <p class="color-price">$19.99 pickup · $28.99 shipped</p>
         </article>
         <article class="color-card">
           <div class="swatch swatch-navy" aria-hidden="true"></div>
           <h3>Matte Navy</h3>
           <p class="color-status">Made to order · 5–7 days</p>
+          <p class="color-price">$19.99 pickup · $28.99 shipped</p>
         </article>
       </div>
     </section>
@@ -238,7 +243,7 @@
       <div class="order-intro">
         <p class="eyebrow">Order</p>
         <h2 id="order-heading">Get your tray</h2>
-        <p class="order-lead">$25 for local pickup in Austin, or $34 shipped in the lower 48.</p>
+        <p class="order-lead">Starting at $19.99 for local pickup in Austin, or $28.99 shipped in the lower 48. Purple Galaxy and Glow Green are $24.99 pickup, or $33.99 shipped. Shipping is a flat $9.</p>
       </div>
 
       <form class="order-flow" id="order-form" action="#" method="get">
@@ -246,43 +251,43 @@
           <legend>Step 1 — Color</legend>
           <div class="choice-grid" role="radiogroup" aria-label="Tray color">
             <label class="choice choice-hero">
-              <input type="radio" name="color" value="Purple Galaxy" data-lead="in stock, ships in 1 to 3 days" checked>
+              <input type="radio" name="color" value="Purple Galaxy" data-pickup-cents="2499" data-lead="in stock, ships in 1 to 3 days" checked>
               <span class="choice-swatch swatch-galaxy" aria-hidden="true"></span>
               <span class="choice-text">
                 <span class="choice-name">Purple Galaxy</span>
-                <span class="choice-meta">In stock · Ships in 1 to 3 days</span>
+                <span class="choice-meta">In stock · Ships in 1 to 3 days · $24.99</span>
               </span>
             </label>
             <label class="choice">
-              <input type="radio" name="color" value="Glow Green" data-lead="made to order, ships in about 5 to 7 days">
+              <input type="radio" name="color" value="Glow Green" data-pickup-cents="2499" data-lead="made to order, ships in about 5 to 7 days">
               <span class="choice-swatch swatch-glow" aria-hidden="true"></span>
               <span class="choice-text">
                 <span class="choice-name">Glow Green</span>
-                <span class="choice-meta">Made to order · About 5 to 7 days</span>
+                <span class="choice-meta">Made to order · About 5 to 7 days · $24.99</span>
               </span>
             </label>
             <label class="choice">
-              <input type="radio" name="color" value="Black" data-lead="in stock, ships in 1 to 3 days">
+              <input type="radio" name="color" value="Black" data-pickup-cents="1999" data-lead="in stock, ships in 1 to 3 days">
               <span class="choice-swatch swatch-black" aria-hidden="true"></span>
               <span class="choice-text">
                 <span class="choice-name">Black</span>
-                <span class="choice-meta">In stock · Ships in 1 to 3 days</span>
+                <span class="choice-meta">In stock · Ships in 1 to 3 days · $19.99</span>
               </span>
             </label>
             <label class="choice">
-              <input type="radio" name="color" value="White" data-lead="in stock, ships in 1 to 3 days">
+              <input type="radio" name="color" value="White" data-pickup-cents="1999" data-lead="in stock, ships in 1 to 3 days">
               <span class="choice-swatch swatch-white" aria-hidden="true"></span>
               <span class="choice-text">
                 <span class="choice-name">White</span>
-                <span class="choice-meta">In stock · Ships in 1 to 3 days</span>
+                <span class="choice-meta">In stock · Ships in 1 to 3 days · $19.99</span>
               </span>
             </label>
             <label class="choice">
-              <input type="radio" name="color" value="Matte Navy Blue" data-lead="made to order, ships in about 5 to 7 days">
+              <input type="radio" name="color" value="Matte Navy Blue" data-pickup-cents="1999" data-lead="made to order, ships in about 5 to 7 days">
               <span class="choice-swatch swatch-navy" aria-hidden="true"></span>
               <span class="choice-text">
                 <span class="choice-name">Matte Navy</span>
-                <span class="choice-meta">Made to order · About 5 to 7 days</span>
+                <span class="choice-meta">Made to order · About 5 to 7 days · $19.99</span>
               </span>
             </label>
           </div>
@@ -292,17 +297,17 @@
           <legend>Step 2 — Delivery</legend>
           <div class="choice-grid choice-grid-two" role="radiogroup" aria-label="Delivery method">
             <label class="choice">
-              <input type="radio" name="delivery" value="pickup" data-total="25">
+              <input type="radio" name="delivery" value="pickup">
               <span class="choice-text">
                 <span class="choice-name">Local pickup in Austin</span>
-                <span class="choice-meta">$25</span>
+                <span class="choice-meta" id="pickup-meta">From $19.99</span>
               </span>
             </label>
             <label class="choice">
-              <input type="radio" name="delivery" value="ship" data-total="34">
+              <input type="radio" name="delivery" value="ship">
               <span class="choice-text">
                 <span class="choice-name">Shipping, lower 48</span>
-                <span class="choice-meta">$34 total · $25 + $9 USPS</span>
+                <span class="choice-meta" id="ship-meta">From $28.99 total · tray + $9 USPS</span>
               </span>
             </label>
           </div>
@@ -355,11 +360,11 @@
         </li>
         <li class="faq-item">
           <h3>How does pickup work?</h3>
-          <p>Local pickup in Austin is $25. After you order, we’ll arrange a public meeting spot in Austin. You can pay with Cash App ahead of time, or with cash or Cash App when we meet.</p>
+          <p>Local pickup in Austin starts at $19.99. White, Black, and Matte Navy are $19.99. Purple Galaxy and Glow Green are $24.99. After you order, we’ll arrange a public meeting spot in Austin. You can pay with Cash App ahead of time, or with cash or Cash App when we meet.</p>
         </li>
         <li class="faq-item">
           <h3>Where do you ship, and how long does it take?</h3>
-          <p>We ship to the lower 48 US states only, for $34 total ($25 plus $9 flat shipping). We don’t ship to Alaska, Hawaii, or internationally. In-stock colors ship in 1 to 3 days. Made-to-order colors ship in about 5 to 7 days.</p>
+          <p>We ship to the lower 48 US states only, starting at $28.99 total ($19.99 plus $9 flat shipping). Purple Galaxy and Glow Green are $33.99 shipped ($24.99 plus $9). We don’t ship to Alaska, Hawaii, or internationally. In-stock colors ship in 1 to 3 days. Made-to-order colors ship in about 5 to 7 days.</p>
         </li>
         <li class="faq-item">
           <h3>What’s your returns policy?</h3>
