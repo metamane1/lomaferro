@@ -9,8 +9,13 @@
   var payLink = document.getElementById("pay-link");
   var pickupMeta = document.getElementById("pickup-meta");
   var shipMeta = document.getElementById("ship-meta");
+  var bundleOffer = document.getElementById("bundle-offer");
+  var colorTwo = document.getElementById("color-two");
+  var bundleTimeNote = document.getElementById("bundle-time-note");
   var basePay = "https://cash.app/$movecash2020";
   var SHIPPING_CENTS = 900;
+  var BUNDLE_PICKUP_CENTS = 3799;
+  var BUNDLE_SHIP_CENTS = 4699;
 
   function selected(name) {
     return form.querySelector('input[name="' + name + '"]:checked');
@@ -30,10 +35,28 @@
     return (cents / 100).toFixed(2);
   }
 
-  function noteText() {
+  function isBundle() {
+    return !!(bundleOffer && bundleOffer.checked);
+  }
+
+  function isMadeToOrder(color) {
+    var lead = (color && color.getAttribute("data-lead")) || "";
+    return lead.indexOf("made to order") !== -1;
+  }
+
+  function colorLabel() {
     var color = selected("color");
+    var color2 = selected("color2");
+    var first = color ? color.value : "your color";
+    if (!isBundle()) return first;
+    var second = color2 ? color2.value : "your second color";
+    if (color && color2 && first === second) return "Bundle: two " + first;
+    return "Bundle: " + first + " + " + second;
+  }
+
+  function noteText() {
     var delivery = selected("delivery");
-    var colorName = color ? color.value : "your color";
+    var colorName = colorLabel();
     var person = (nameInput.value || "").trim() || "your name";
     if (!delivery) {
       return colorName + ", " + person + ", pickup or shipping address";
@@ -46,16 +69,25 @@
   }
 
   function sync() {
+    var bundle = isBundle();
     var color = selected("color");
+    var color2 = selected("color2");
     var delivery = selected("delivery");
     var shipping = delivery && delivery.value === "ship";
-    var pickup = pickupCents(color);
-    var shipped = pickup + SHIPPING_CENTS;
+    var pickup = bundle ? BUNDLE_PICKUP_CENTS : pickupCents(color);
+    var shipped = bundle ? BUNDLE_SHIP_CENTS : pickup + SHIPPING_CENTS;
+    if (colorTwo) colorTwo.hidden = !bundle;
+    if (bundleTimeNote) {
+      bundleTimeNote.hidden = !(bundle && (isMadeToOrder(color) || isMadeToOrder(color2)));
+    }
     addressField.hidden = !shipping;
     if (!shipping) addressInput.value = addressInput.value;
     noteEl.textContent = noteText();
 
-    if (color && pickup) {
+    if (bundle) {
+      pickupMeta.textContent = formatMoney(BUNDLE_PICKUP_CENTS);
+      shipMeta.textContent = formatMoney(BUNDLE_SHIP_CENTS) + " total · " + formatMoney(BUNDLE_PICKUP_CENTS) + " + $9 USPS";
+    } else if (color && pickup) {
       pickupMeta.textContent = formatMoney(pickup);
       shipMeta.textContent = formatMoney(shipped) + " total · " + formatMoney(pickup) + " + $9 USPS";
     } else {
@@ -63,8 +95,10 @@
       shipMeta.textContent = "From $28.99 total · tray + $9 USPS";
     }
 
-    if (!delivery || !pickup) {
-      totalEl.textContent = "Choose pickup or shipping to see your total.";
+    if (!delivery || !pickup || (bundle && (!color || !color2))) {
+      totalEl.textContent = (bundle && delivery && (!color || !color2))
+        ? "Choose both colors to see your total."
+        : "Choose pickup or shipping to see your total.";
       payLink.href = basePay;
       payLink.classList.add("is-disabled");
       payLink.setAttribute("aria-disabled", "true");
@@ -72,7 +106,11 @@
     }
 
     var total = shipping ? shipped : pickup;
-    if (delivery.value === "pickup") {
+    if (bundle && delivery.value === "pickup") {
+      totalEl.textContent = "Total: " + formatMoney(total) + " for a two-tray bundle, local pickup in Austin.";
+    } else if (bundle) {
+      totalEl.textContent = "Total: " + formatMoney(total) + " for a two-tray bundle, shipped in the lower 48 (" + formatMoney(pickup) + " plus $9 USPS).";
+    } else if (delivery.value === "pickup") {
       totalEl.textContent = "Total: " + formatMoney(total) + " for local pickup in Austin.";
     } else {
       totalEl.textContent = "Total: " + formatMoney(total) + " shipped in the lower 48 (" + formatMoney(pickup) + " plus $9 USPS).";

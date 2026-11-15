@@ -244,6 +244,7 @@
         <p class="eyebrow">Order</p>
         <h2 id="order-heading">Get your tray</h2>
         <p class="order-lead">Starting at $19.99 for local pickup in Austin, or $28.99 shipped in the lower 48. Purple Galaxy and Glow Green are $24.99 pickup, or $33.99 shipped. Shipping is a flat $9.</p>
+        <p class="order-lead">Two-tray bundle: any two colors for $37.99 pickup in Austin, or $46.99 shipped (one $9 shipping). Made-to-order colors add print time.</p>
       </div>
 
       <form class="order-flow" id="order-form" action="#" method="get">
@@ -290,6 +291,56 @@
                 <span class="choice-meta">Made to order · About 5 to 7 days · $19.99</span>
               </span>
             </label>
+          </div>
+          <label class="bundle-opt">
+            <input type="checkbox" name="offer" id="bundle-offer" value="bundle">
+            Two-tray bundle: $37.99 pickup, or $46.99 shipped (one $9 shipping)
+          </label>
+          <div id="color-two" hidden>
+            <p class="eyebrow">Second tray</p>
+            <div class="choice-grid" role="radiogroup" aria-label="Second tray color">
+              <label class="choice choice-hero">
+                <input type="radio" name="color2" value="Purple Galaxy" data-pickup-cents="2499" data-lead="in stock, ships in 1 to 3 days" checked>
+                <span class="choice-swatch swatch-galaxy" aria-hidden="true"></span>
+                <span class="choice-text">
+                  <span class="choice-name">Purple Galaxy</span>
+                  <span class="choice-meta">In stock · Ships in 1 to 3 days · $24.99</span>
+                </span>
+              </label>
+              <label class="choice">
+                <input type="radio" name="color2" value="Glow Green" data-pickup-cents="2499" data-lead="made to order, ships in about 5 to 7 days">
+                <span class="choice-swatch swatch-glow" aria-hidden="true"></span>
+                <span class="choice-text">
+                  <span class="choice-name">Glow Green</span>
+                  <span class="choice-meta">Made to order · About 5 to 7 days · $24.99</span>
+                </span>
+              </label>
+              <label class="choice">
+                <input type="radio" name="color2" value="Black" data-pickup-cents="1999" data-lead="in stock, ships in 1 to 3 days">
+                <span class="choice-swatch swatch-black" aria-hidden="true"></span>
+                <span class="choice-text">
+                  <span class="choice-name">Black</span>
+                  <span class="choice-meta">In stock · Ships in 1 to 3 days · $19.99</span>
+                </span>
+              </label>
+              <label class="choice">
+                <input type="radio" name="color2" value="White" data-pickup-cents="1999" data-lead="in stock, ships in 1 to 3 days">
+                <span class="choice-swatch swatch-white" aria-hidden="true"></span>
+                <span class="choice-text">
+                  <span class="choice-name">White</span>
+                  <span class="choice-meta">In stock · Ships in 1 to 3 days · $19.99</span>
+                </span>
+              </label>
+              <label class="choice">
+                <input type="radio" name="color2" value="Matte Navy Blue" data-pickup-cents="1999" data-lead="made to order, ships in about 5 to 7 days">
+                <span class="choice-swatch swatch-navy" aria-hidden="true"></span>
+                <span class="choice-text">
+                  <span class="choice-name">Matte Navy</span>
+                  <span class="choice-meta">Made to order · About 5 to 7 days · $19.99</span>
+                </span>
+              </label>
+            </div>
+            <p class="ship-note" id="bundle-time-note" hidden>Made-to-order colors add about 5 to 7 days of print time.</p>
           </div>
         </fieldset>
 
@@ -365,6 +416,10 @@
         <li class="faq-item">
           <h3>Where do you ship, and how long does it take?</h3>
           <p>We ship to the lower 48 US states only, starting at $28.99 total ($19.99 plus $9 flat shipping). Purple Galaxy and Glow Green are $33.99 shipped ($24.99 plus $9). We don’t ship to Alaska, Hawaii, or internationally. In-stock colors ship in 1 to 3 days. Made-to-order colors ship in about 5 to 7 days.</p>
+        </li>
+        <li class="faq-item">
+          <h3>Do you offer a two-tray bundle?</h3>
+          <p>Yes. Any two trays are $37.99 for local pickup in Austin, or $46.99 shipped in the lower 48 (one $9 shipping). Mix and match colors, or get two of the same. Made-to-order colors add print time.</p>
         </li>
         <li class="faq-item">
           <h3>What’s your returns policy?</h3>

@@ -737,6 +737,29 @@ main,
 
 .choice-hero { background: linear-gradient(145deg, rgba(90, 40, 170, 0.22), var(--bg-elev) 60%); }
 
+.bundle-opt {
+  display: flex;
+  gap: 0.6rem;
+  align-items: flex-start;
+  margin: 1rem 0 0;
+  color: var(--muted);
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+
+.bundle-opt input {
+  margin-top: 0.25rem;
+  accent-color: var(--accent);
+}
+
+#color-two {
+  margin-top: 1rem;
+}
+
+#color-two .eyebrow {
+  margin-bottom: 0.65rem;
+}
+
 .ship-note,
 .pay-help,
 .pay-aside,
