@@ -1129,3 +1129,65 @@ main,
     transform: none;
   }
 }
+
+
+/* Holiday bundle banner — new rules only */
+
+.bundle-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem clamp(1.15rem, 4vw, 2.5rem);
+  background: color-mix(in srgb, var(--accent-deep) 34%, var(--bg-elev));
+  border-bottom: 1px solid var(--line);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 0.88rem;
+  line-height: 1.4;
+  overflow: hidden;
+}
+
+.bundle-banner[hidden] { display: none !important; }
+
+.bundle-banner-text {
+  margin: 0;
+  flex: 1;
+  text-align: center;
+}
+
+.bundle-banner-text a {
+  color: var(--accent);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+}
+
+.bundle-banner-text a:hover,
+.bundle-banner-text a:focus-visible {
+  color: var(--ink);
+}
+
+.bundle-banner-close {
+  flex-shrink: 0;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius);
+  background: transparent;
+  color: var(--muted);
+  font-family: var(--sans);
+  font-size: 1.35rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.bundle-banner-close:hover,
+.bundle-banner-close:focus-visible {
+  color: var(--ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bundle-banner { transition: none; }
+}

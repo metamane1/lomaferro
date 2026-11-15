@@ -41,6 +41,11 @@
     </nav>
   </header>
 
+  <aside class="bundle-banner" id="bundle-banner" hidden>
+    <p class="bundle-banner-text">Holiday bundle: any two trays $37.99 pickup in Austin, or $46.99 shipped. <a href="#order" id="bundle-banner-cta">Get the bundle</a></p>
+    <button type="button" class="bundle-banner-close" id="bundle-banner-close" aria-label="Dismiss holiday bundle announcement">×</button>
+  </aside>
+
   <main id="main">
     <section class="hero" id="top" aria-labelledby="hero-heading">
       <div class="hero-copy">
@@ -457,5 +462,85 @@
   </footer>
 
   <script src="order.js" defer></script>
+  <script>
+    (function () {
+      var banner = document.getElementById("bundle-banner");
+      var closeBtn = document.getElementById("bundle-banner-close");
+      var cta = document.getElementById("bundle-banner-cta");
+      var key = "lomaferro-bundle-banner-dismissed";
+      if (!banner) return;
+      try {
+        if (window.localStorage.getItem(key)) return;
+      } catch (e) {}
+      banner.hidden = false;
+
+      function dismiss(dir) {
+        if (banner.hidden) return;
+        var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        try { window.localStorage.setItem(key, "1"); } catch (e) {}
+        if (reduce) {
+          banner.hidden = true;
+          return;
+        }
+        var to = dir === "left" ? "-110%" : "110%";
+        banner.style.transition = "transform 0.28s ease, opacity 0.28s ease";
+        banner.style.transform = "translateX(" + to + ")";
+        banner.style.opacity = "0";
+        window.setTimeout(function () {
+          banner.hidden = true;
+          banner.style.transition = "";
+          banner.style.transform = "";
+          banner.style.opacity = "";
+        }, 280);
+      }
+
+      closeBtn.addEventListener("click", function () { dismiss("right"); });
+
+      cta.addEventListener("click", function () {
+        var box = document.getElementById("bundle-offer");
+        if (box && !box.checked) {
+          box.checked = true;
+          box.dispatchEvent(new Event("change", { bubbles: true }));
+        }
+      });
+
+      var startX = 0, startY = 0, lastX = 0, tracking = false, swiping = false;
+      banner.addEventListener("touchstart", function (event) {
+        var t = event.changedTouches[0];
+        if (!t) return;
+        startX = lastX = t.clientX;
+        startY = t.clientY;
+        tracking = true;
+        swiping = false;
+        banner.style.transition = "none";
+      }, { passive: true });
+      banner.addEventListener("touchmove", function (event) {
+        if (!tracking) return;
+        var t = event.changedTouches[0];
+        if (!t) return;
+        var dx = t.clientX - startX;
+        var dy = t.clientY - startY;
+        if (!swiping) {
+          if (Math.abs(dx) < 8 && Math.abs(dy) < 8) return;
+          if (Math.abs(dx) > Math.abs(dy)) swiping = true;
+          else { tracking = false; return; }
+        }
+        lastX = t.clientX;
+        banner.style.transform = "translateX(" + dx + "px)";
+      }, { passive: true });
+      banner.addEventListener("touchend", function () {
+        if (!tracking) return;
+        tracking = false;
+        var dx = lastX - startX;
+        if (swiping && Math.abs(dx) > 50) {
+          dismiss(dx > 0 ? "right" : "left");
+        } else {
+          banner.style.transition = "transform 0.2s ease";
+          banner.style.transform = "";
+        }
+        swiping = false;
+      });
+    })();
+  </script>
 </body>
 </html>
