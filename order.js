@@ -62,8 +62,10 @@
     function ok() {
       var prev = copyBtn.textContent;
       copyBtn.textContent = "Copied";
+      copyBtn.classList.add("is-copied");
       window.setTimeout(function () {
         copyBtn.textContent = prev;
+        copyBtn.classList.remove("is-copied");
       }, 1600);
     }
     if (navigator.clipboard && navigator.clipboard.writeText) {
@@ -82,4 +84,23 @@
   });
 
   sync();
+
+  var revealEls = document.querySelectorAll(".reveal");
+  var reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (reduceMotion || !("IntersectionObserver" in window)) {
+    for (var i = 0; i < revealEls.length; i++) revealEls[i].classList.add("is-in");
+  } else {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("is-in");
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12, rootMargin: "0px 0px -40px 0px" });
+    for (var j = 0; j < revealEls.length; j++) io.observe(revealEls[j]);
+    window.setTimeout(function () {
+      for (var k = 0; k < revealEls.length; k++) revealEls[k].classList.add("is-in");
+    }, 2500);
+  }
 })();

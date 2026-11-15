@@ -311,7 +311,8 @@ main,
   transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
 }
 
-.btn:hover {
+.btn:hover,
+.btn:focus-visible {
   color: #fff;
   filter: brightness(1.08);
   box-shadow: 0 0 0 1px rgba(215, 179, 255, 0.6), 0 10px 28px rgba(124, 77, 255, 0.55);
@@ -324,7 +325,8 @@ main,
   box-shadow: inset 0 0 0 1px var(--line);
 }
 
-.btn-ghost:hover {
+.btn-ghost:hover,
+.btn-ghost:focus-visible {
   color: var(--ink);
   background: rgba(181, 122, 255, 0.08);
   filter: none;
@@ -865,7 +867,128 @@ main,
   .site-footer { flex-direction: column; gap: 0.35rem; }
 }
 
+/* Light polish: micro-interactions */
+
+.nav a,
+.wordmark {
+  transition: color 0.18s ease;
+}
+
+.field input,
+.field textarea {
+  transition: border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.field input:focus-visible,
+.field textarea:focus-visible {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(124, 77, 255, 0.28);
+}
+
+.color-card .swatch {
+  transition: transform 0.22s ease, box-shadow 0.22s ease;
+}
+
+.choice:has(input:checked) {
+  box-shadow: var(--glow), inset 0 0 0 1px rgba(181, 122, 255, 0.4);
+}
+
+.choice:has(input:checked) .choice-swatch {
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.12),
+    0 0 0 2px var(--bg-elev),
+    0 0 0 4px var(--accent);
+}
+
+.btn-ghost.is-copied {
+  color: var(--ink);
+  background: rgba(181, 122, 255, 0.16);
+  box-shadow: inset 0 0 0 1px var(--accent);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .hero-copy {
+    animation: fade-rise 0.75s ease both;
+  }
+
+  .hero-figure {
+    animation: fade-rise 0.85s ease both 0.1s;
+  }
+
+  .hero-cta .btn {
+    animation: cta-pulse 2.8s ease-in-out 1.1s infinite;
+  }
+
+  .hero-cta .btn:hover,
+  .hero-cta .btn:focus-visible {
+    animation: none;
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(18px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+
+  .reveal.is-in {
+    opacity: 1;
+    transform: none;
+  }
+
+  .color-card:hover .swatch {
+    transform: scale(1.06);
+  }
+
+  .btn-ghost.is-copied {
+    animation: copy-flash 0.45s ease;
+  }
+}
+
+@keyframes fade-rise {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes cta-pulse {
+  0%, 100% {
+    box-shadow: 0 0 0 1px rgba(181, 122, 255, 0.45), 0 8px 24px rgba(90, 40, 180, 0.45);
+  }
+  50% {
+    box-shadow:
+      0 0 0 1px rgba(215, 179, 255, 0.7),
+      0 8px 28px rgba(124, 77, 255, 0.7),
+      0 0 36px rgba(124, 77, 255, 0.42);
+  }
+}
+
+@keyframes copy-flash {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.04); }
+  100% { transform: scale(1); }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
-  .btn, .color-card { transition: none; }
+  .btn,
+  .color-card,
+  .color-card .swatch,
+  .nav a,
+  .wordmark,
+  .field input,
+  .field textarea,
+  .choice {
+    transition: none;
+  }
+
+  .hero-copy,
+  .hero-figure,
+  .hero-cta .btn,
+  .btn-ghost.is-copied {
+    animation: none;
+  }
+
+  .reveal {
+    opacity: 1;
+    transform: none;
+  }
 }
