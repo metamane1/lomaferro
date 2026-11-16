@@ -1,21 +1,26 @@
 (function () {
   var form = document.getElementById("order-form");
   var nameInput = document.getElementById("order-name");
-  var addressField = document.getElementById("address-field");
-  var addressInput = document.getElementById("order-address");
+  var stateInput = document.getElementById("order-state");
+  var zipInput = document.getElementById("order-zip");
+  var shipFields = document.getElementById("ship-fields");
+  var checkoutItem = document.getElementById("checkout-item");
+  var checkoutSubtotal = document.getElementById("checkout-subtotal");
+  var checkoutShipping = document.getElementById("checkout-shipping");
+  var checkoutTax = document.getElementById("checkout-tax");
+  var checkoutTotal = document.getElementById("checkout-total");
   var noteEl = document.getElementById("order-note");
   var copyBtn = document.getElementById("copy-note");
   var totalEl = document.getElementById("order-total");
   var payLink = document.getElementById("pay-link");
-  var pickupMeta = document.getElementById("pickup-meta");
-  var shipMeta = document.getElementById("ship-meta");
   var bundleOffer = document.getElementById("bundle-offer");
   var colorTwo = document.getElementById("color-two");
   var bundleTimeNote = document.getElementById("bundle-time-note");
   var basePay = "https://cash.app/$movecash2020";
   var SHIPPING_CENTS = 900;
-  var BUNDLE_PICKUP_CENTS = 3799;
-  var BUNDLE_SHIP_CENTS = 4699;
+  var BUNDLE_CENTS = 3799;
+  var TAX_RATE_NUM = 825;
+  var TAX_RATE_DEN = 10000;
 
   function selected(name) {
     return form.querySelector('input[name="' + name + '"]:checked');
@@ -50,79 +55,149 @@
     var first = color ? color.value : "your color";
     if (!isBundle()) return first;
     var second = color2 ? color2.value : "your second color";
-    if (color && color2 && first === second) return "Bundle: two " + first;
-    return "Bundle: " + first + " + " + second;
+    if (color && color2 && first === second) return "two " + first;
+    return first + " + " + second;
   }
 
-  function noteText() {
-    var delivery = selected("delivery");
-    var colorName = colorLabel();
-    var person = (nameInput.value || "").trim() || "your name";
-    if (!delivery) {
-      return colorName + ", " + person + ", pickup or shipping address";
-    }
-    if (delivery.value === "pickup") {
-      return colorName + ", " + person + ", pickup";
-    }
-    var address = (addressInput.value || "").trim() || "your shipping address";
-    return colorName + ", " + person + ", " + address;
+  function taxCents(taxableCents, applyTax) {
+    if (!applyTax) return 0;
+    return Math.round(taxableCents * TAX_RATE_NUM / TAX_RATE_DEN);
   }
 
-  function sync() {
+  function zipValue() {
+    return ((zipInput && zipInput.value) || "").trim();
+  }
+
+  function validZip(value) {
+    return /^\d{5}(?:-\d{4})?$/.test(value);
+  }
+
+  function quote() {
     var bundle = isBundle();
     var color = selected("color");
     var color2 = selected("color2");
     var delivery = selected("delivery");
-    var shipping = delivery && delivery.value === "ship";
-    var pickup = bundle ? BUNDLE_PICKUP_CENTS : pickupCents(color);
-    var shipped = bundle ? BUNDLE_SHIP_CENTS : pickup + SHIPPING_CENTS;
-    if (colorTwo) colorTwo.hidden = !bundle;
-    if (bundleTimeNote) {
-      bundleTimeNote.hidden = !(bundle && (isMadeToOrder(color) || isMadeToOrder(color2)));
+    var shipping = !!(delivery && delivery.value === "ship");
+    var subtotal = bundle ? BUNDLE_CENTS : pickupCents(color);
+    var ship = shipping ? SHIPPING_CENTS : 0;
+    var state = ((stateInput && stateInput.value) || "").trim();
+    var applyTax = false;
+    var taxKnown = false;
+    if (delivery && (!bundle || (color && color2)) && subtotal) {
+      if (!shipping) {
+        applyTax = true;
+        taxKnown = true;
+      } else if (state) {
+        applyTax = state === "TX";
+        taxKnown = true;
+      }
     }
-    addressField.hidden = !shipping;
-    if (!shipping) addressInput.value = addressInput.value;
+    var tax = taxKnown ? taxCents(subtotal + ship, applyTax) : null;
+    var total = taxKnown ? subtotal + ship + tax : null;
+    return {
+      bundle: bundle,
+      color: color,
+      color2: color2,
+      delivery: delivery,
+      shipping: shipping,
+      subtotal: subtotal,
+      ship: ship,
+      state: state,
+      zip: zipValue(),
+      taxKnown: taxKnown,
+      tax: tax,
+      total: total
+    };
+  }
+
+  function noteText() {
+    var q = quote();
+    var item = q.bundle ? "Bundle: " + colorLabel() : colorLabel() + " tray";
+    var person = (nameInput.value || "").trim() || "your name";
+    if (!q.delivery) {
+      return item + ", " + person + ", pickup or shipping";
+    }
+    if (!q.shipping) {
+      return item + ", " + person + ", pickup";
+    }
+    var place = (q.state || q.zip) ? [q.state, q.zip].filter(Boolean).join(" ") : "state and ZIP";
+    return item + ", " + person + ", ship " + place;
+  }
+
+  function dashTotals() {
+    checkoutSubtotal.textContent = "—";
+    checkoutShipping.textContent = "—";
+    checkoutTax.textContent = "—";
+    checkoutTotal.textContent = "—";
+  }
+
+  function disablePay() {
+    payLink.href = basePay;
+    payLink.classList.add("is-disabled");
+    payLink.setAttribute("aria-disabled", "true");
+  }
+
+  function sync() {
+    var q = quote();
+    if (colorTwo) colorTwo.hidden = !q.bundle;
+    if (bundleTimeNote) {
+      bundleTimeNote.hidden = !(q.bundle && (isMadeToOrder(q.color) || isMadeToOrder(q.color2)));
+    }
+    if (shipFields) shipFields.hidden = !q.shipping;
     noteEl.textContent = noteText();
 
-    if (bundle) {
-      pickupMeta.textContent = formatMoney(BUNDLE_PICKUP_CENTS);
-      shipMeta.textContent = formatMoney(BUNDLE_SHIP_CENTS) + " total · " + formatMoney(BUNDLE_PICKUP_CENTS) + " + $9 USPS";
-    } else if (color && pickup) {
-      pickupMeta.textContent = formatMoney(pickup);
-      shipMeta.textContent = formatMoney(shipped) + " total · " + formatMoney(pickup) + " + $9 USPS";
+    if (q.bundle && q.color && q.color2) {
+      checkoutItem.textContent = "Two-tray bundle: " + colorLabel() + " — " + formatMoney(BUNDLE_CENTS);
+    } else if (!q.bundle && q.color && q.subtotal) {
+      checkoutItem.textContent = (q.color.value) + " — " + formatMoney(q.subtotal);
     } else {
-      pickupMeta.textContent = "From $19.99";
-      shipMeta.textContent = "From $28.99 total · tray + $9 USPS";
+      checkoutItem.textContent = "Choose a color and delivery to review your order.";
     }
 
-    if (!delivery || !pickup || (bundle && (!color || !color2))) {
-      totalEl.textContent = (bundle && delivery && (!color || !color2))
+    if (!q.delivery || !q.subtotal || (q.bundle && (!q.color || !q.color2))) {
+      dashTotals();
+      totalEl.textContent = (q.bundle && q.delivery && (!q.color || !q.color2))
         ? "Choose both colors to see your total."
         : "Choose pickup or shipping to see your total.";
-      payLink.href = basePay;
-      payLink.classList.add("is-disabled");
-      payLink.setAttribute("aria-disabled", "true");
+      disablePay();
       return;
     }
 
-    var total = shipping ? shipped : pickup;
-    if (bundle && delivery.value === "pickup") {
-      totalEl.textContent = "Total: " + formatMoney(total) + " for a two-tray bundle, local pickup in Austin.";
-    } else if (bundle) {
-      totalEl.textContent = "Total: " + formatMoney(total) + " for a two-tray bundle, shipped in the lower 48 (" + formatMoney(pickup) + " plus $9 USPS).";
-    } else if (delivery.value === "pickup") {
-      totalEl.textContent = "Total: " + formatMoney(total) + " for local pickup in Austin.";
-    } else {
-      totalEl.textContent = "Total: " + formatMoney(total) + " shipped in the lower 48 (" + formatMoney(pickup) + " plus $9 USPS).";
+    checkoutSubtotal.textContent = formatMoney(q.subtotal);
+    checkoutShipping.textContent = q.shipping ? formatMoney(q.ship) : "Free";
+
+    if (!q.taxKnown) {
+      checkoutTax.textContent = "—";
+      checkoutTotal.textContent = "—";
+      totalEl.textContent = "Enter your state and ZIP to see your total.";
+      disablePay();
+      return;
     }
-    payLink.href = basePay + "/" + cashAppAmount(total);
+
+    if (q.shipping && !validZip(q.zip)) {
+      checkoutTax.textContent = formatMoney(q.tax);
+      checkoutTotal.textContent = formatMoney(q.total);
+      totalEl.textContent = "Enter a 5-digit ZIP to finish checkout.";
+      disablePay();
+      return;
+    }
+
+    checkoutTax.textContent = formatMoney(q.tax);
+    checkoutTotal.textContent = formatMoney(q.total);
+    if (q.shipping) {
+      totalEl.textContent = "Total: " + formatMoney(q.total) + " shipped to " + q.state + " " + q.zip + ".";
+    } else {
+      totalEl.textContent = "Total: " + formatMoney(q.total) + " for local pickup in Austin.";
+    }
+    payLink.href = basePay + "/" + cashAppAmount(q.total);
     payLink.classList.remove("is-disabled");
     payLink.setAttribute("aria-disabled", "false");
   }
 
   form.addEventListener("change", sync);
   nameInput.addEventListener("input", sync);
-  addressInput.addEventListener("input", sync);
+  if (zipInput) zipInput.addEventListener("input", sync);
+  if (stateInput) stateInput.addEventListener("change", sync);
 
   copyBtn.addEventListener("click", function () {
     var text = noteText();
