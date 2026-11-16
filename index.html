@@ -375,6 +375,18 @@
           <p class="checkout-item" id="checkout-item">Choose a color and delivery to review your order.</p>
           <div class="note-builder" id="ship-fields" hidden>
             <label class="field">
+              <span>Name</span>
+              <input type="text" id="order-ship-name" name="ship-name" autocomplete="name" maxlength="80">
+            </label>
+            <label class="field">
+              <span>Street address</span>
+              <input type="text" id="order-street" name="street" autocomplete="address-line1" maxlength="120">
+            </label>
+            <label class="field">
+              <span>City</span>
+              <input type="text" id="order-city" name="city" autocomplete="address-level2" maxlength="80">
+            </label>
+            <label class="field">
               <span>State</span>
               <select id="order-state" name="state" autocomplete="address-level1">
                 <option value="">Select a state</option>
@@ -445,7 +457,7 @@
           <legend>Step 4 — Pay</legend>
           <p class="pay-help">Pay with Cash App. In the payment note, include the item, colors, your name, and either your ZIP or the word pickup.</p>
           <div class="note-builder">
-            <label class="field">
+            <label class="field" id="pay-name-field">
               <span>Your name</span>
               <input type="text" id="order-name" name="name" autocomplete="name" maxlength="80">
             </label>

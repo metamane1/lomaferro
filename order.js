@@ -1,6 +1,10 @@
 (function () {
   var form = document.getElementById("order-form");
   var nameInput = document.getElementById("order-name");
+  var payNameField = document.getElementById("pay-name-field");
+  var shipNameInput = document.getElementById("order-ship-name");
+  var streetInput = document.getElementById("order-street");
+  var cityInput = document.getElementById("order-city");
   var stateInput = document.getElementById("order-state");
   var zipInput = document.getElementById("order-zip");
   var shipFields = document.getElementById("ship-fields");
@@ -64,8 +68,12 @@
     return Math.round(taxableCents * TAX_RATE_NUM / TAX_RATE_DEN);
   }
 
+  function fieldValue(el) {
+    return ((el && el.value) || "").trim();
+  }
+
   function zipValue() {
-    return ((zipInput && zipInput.value) || "").trim();
+    return fieldValue(zipInput);
   }
 
   function validZip(value) {
@@ -102,6 +110,9 @@
       shipping: shipping,
       subtotal: subtotal,
       ship: ship,
+      shipName: fieldValue(shipNameInput),
+      street: fieldValue(streetInput),
+      city: fieldValue(cityInput),
       state: state,
       zip: zipValue(),
       taxKnown: taxKnown,
@@ -113,14 +124,18 @@
   function noteText() {
     var q = quote();
     var item = q.bundle ? "Bundle: " + colorLabel() : colorLabel() + " tray";
-    var person = (nameInput.value || "").trim() || "your name";
+    var person = (q.shipping ? q.shipName : fieldValue(nameInput)) || "your name";
     if (!q.delivery) {
       return item + ", " + person + ", pickup or shipping";
     }
     if (!q.shipping) {
       return item + ", " + person + ", pickup";
     }
-    var place = (q.state || q.zip) ? [q.state, q.zip].filter(Boolean).join(" ") : "state and ZIP";
+    var place = [q.street, q.city, q.state, q.zip].filter(Boolean).join(", ");
+    if (!place) place = "shipping address";
+    else if (q.state && q.zip) {
+      place = [q.street, q.city, (q.state + " " + q.zip).trim()].filter(Boolean).join(", ");
+    }
     return item + ", " + person + ", ship " + place;
   }
 
@@ -144,6 +159,7 @@
       bundleTimeNote.hidden = !(q.bundle && (isMadeToOrder(q.color) || isMadeToOrder(q.color2)));
     }
     if (shipFields) shipFields.hidden = !q.shipping;
+    if (payNameField) payNameField.hidden = !!q.shipping;
     noteEl.textContent = noteText();
 
     if (q.bundle && q.color && q.color2) {
@@ -174,10 +190,10 @@
       return;
     }
 
-    if (q.shipping && !validZip(q.zip)) {
+    if (q.shipping && (!q.shipName || !q.street || !q.city || !validZip(q.zip))) {
       checkoutTax.textContent = formatMoney(q.tax);
       checkoutTotal.textContent = formatMoney(q.total);
-      totalEl.textContent = "Enter a 5-digit ZIP to finish checkout.";
+      totalEl.textContent = "Enter your name and shipping address to finish checkout.";
       disablePay();
       return;
     }
@@ -196,6 +212,9 @@
 
   form.addEventListener("change", sync);
   nameInput.addEventListener("input", sync);
+  if (shipNameInput) shipNameInput.addEventListener("input", sync);
+  if (streetInput) streetInput.addEventListener("input", sync);
+  if (cityInput) cityInput.addEventListener("input", sync);
   if (zipInput) zipInput.addEventListener("input", sync);
   if (stateInput) stateInput.addEventListener("change", sync);
 
