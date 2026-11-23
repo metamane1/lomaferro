@@ -1,13 +1,13 @@
 (function () {
   var form = document.getElementById("order-form");
-  var nameInput = document.getElementById("order-name");
-  var payNameField = document.getElementById("pay-name-field");
   var shipNameInput = document.getElementById("order-ship-name");
+  var emailInput = document.getElementById("order-email");
   var streetInput = document.getElementById("order-street");
   var cityInput = document.getElementById("order-city");
   var stateInput = document.getElementById("order-state");
   var zipInput = document.getElementById("order-zip");
   var shipFields = document.getElementById("ship-fields");
+  var ageInput = document.getElementById("order-age");
   var checkoutItem = document.getElementById("checkout-item");
   var checkoutSubtotal = document.getElementById("checkout-subtotal");
   var checkoutShipping = document.getElementById("checkout-shipping");
@@ -26,6 +26,12 @@
   var TAX_RATE_NUM = 825;
   var TAX_RATE_DEN = 10000;
 
+  // GATED: card checkout is on hold. Abram is choosing Stripe pre-approval,
+  // a PaymentCloud quote, or Cash App only. Do not add a card SDK, card fields,
+  // or processor keys until he picks. If he chooses Stripe, see
+  // /workspace/tray-business/product/card_checkout_spec.md then; if PaymentCloud
+  // or Cash App only, do not implement that Stripe spec.
+
   function selected(name) {
     return form.querySelector('input[name="' + name + '"]:checked');
   }
@@ -34,8 +40,8 @@
     return "$" + (cents / 100).toFixed(2);
   }
 
-  function pickupCents(color) {
-    var raw = color && color.getAttribute("data-pickup-cents");
+  function priceCents(color) {
+    var raw = color && color.getAttribute("data-price-cents");
     var n = raw ? parseInt(raw, 10) : NaN;
     return isFinite(n) ? n : 0;
   }
@@ -80,22 +86,22 @@
     return /^\d{5}(?:-\d{4})?$/.test(value);
   }
 
+  function validEmail(value) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+  }
+
   function quote() {
     var bundle = isBundle();
     var color = selected("color");
     var color2 = selected("color2");
-    var delivery = selected("delivery");
-    var shipping = !!(delivery && delivery.value === "ship");
-    var subtotal = bundle ? BUNDLE_CENTS : pickupCents(color);
-    var ship = shipping ? SHIPPING_CENTS : 0;
+    var shipping = true;
+    var subtotal = bundle ? BUNDLE_CENTS : priceCents(color);
+    var ship = SHIPPING_CENTS;
     var state = ((stateInput && stateInput.value) || "").trim();
     var applyTax = false;
     var taxKnown = false;
-    if (delivery && (!bundle || (color && color2)) && subtotal) {
-      if (!shipping) {
-        applyTax = true;
-        taxKnown = true;
-      } else if (state) {
+    if ((!bundle || (color && color2)) && subtotal) {
+      if (state) {
         applyTax = state === "TX";
         taxKnown = true;
       }
@@ -106,15 +112,16 @@
       bundle: bundle,
       color: color,
       color2: color2,
-      delivery: delivery,
       shipping: shipping,
       subtotal: subtotal,
       ship: ship,
       shipName: fieldValue(shipNameInput),
+      email: fieldValue(emailInput),
       street: fieldValue(streetInput),
       city: fieldValue(cityInput),
       state: state,
       zip: zipValue(),
+      ageConfirmed: !!(ageInput && ageInput.checked),
       taxKnown: taxKnown,
       tax: tax,
       total: total
@@ -124,26 +131,20 @@
   function noteText() {
     var q = quote();
     var item = q.bundle ? "Bundle: " + colorLabel() : colorLabel() + " tray";
-    var person = (q.shipping ? q.shipName : fieldValue(nameInput)) || "your name";
-    if (!q.delivery) {
-      return item + ", " + person + ", pickup or shipping";
-    }
-    if (!q.shipping) {
-      return item + ", " + person + ", pickup";
-    }
+    var person = q.shipName || "your name";
     var place = [q.street, q.city, q.state, q.zip].filter(Boolean).join(", ");
     if (!place) place = "shipping address";
     else if (q.state && q.zip) {
       place = [q.street, q.city, (q.state + " " + q.zip).trim()].filter(Boolean).join(", ");
     }
-    return item + ", " + person + ", ship " + place;
+    return item + ", " + person + ", " + (q.email || "your email") + ", ship " + place;
   }
 
   function dashTotals() {
-    checkoutSubtotal.textContent = "—";
-    checkoutShipping.textContent = "—";
-    checkoutTax.textContent = "—";
-    checkoutTotal.textContent = "—";
+    checkoutSubtotal.textContent = "\u2014";
+    checkoutShipping.textContent = "\u2014";
+    checkoutTax.textContent = "\u2014";
+    checkoutTotal.textContent = "\u2014";
   }
 
   function disablePay() {
@@ -158,65 +159,66 @@
     if (bundleTimeNote) {
       bundleTimeNote.hidden = !(q.bundle && (isMadeToOrder(q.color) || isMadeToOrder(q.color2)));
     }
-    if (shipFields) shipFields.hidden = !q.shipping;
-    if (payNameField) payNameField.hidden = !!q.shipping;
+    if (shipFields) shipFields.hidden = false;
     noteEl.textContent = noteText();
 
     if (q.bundle && q.color && q.color2) {
-      checkoutItem.textContent = "Two-tray bundle: " + colorLabel() + " — " + formatMoney(BUNDLE_CENTS);
+      checkoutItem.textContent = "Two-tray bundle: " + colorLabel() + " \u2014 " + formatMoney(BUNDLE_CENTS);
     } else if (!q.bundle && q.color && q.subtotal) {
-      checkoutItem.textContent = (q.color.value) + " — " + formatMoney(q.subtotal);
+      checkoutItem.textContent = (q.color.value) + " \u2014 " + formatMoney(q.subtotal);
     } else {
-      checkoutItem.textContent = "Choose a color and delivery to review your order.";
+      checkoutItem.textContent = "Choose a color to review your order.";
     }
 
-    if (!q.delivery || !q.subtotal || (q.bundle && (!q.color || !q.color2))) {
+    if (!q.subtotal || (q.bundle && (!q.color || !q.color2))) {
       dashTotals();
-      totalEl.textContent = (q.bundle && q.delivery && (!q.color || !q.color2))
+      totalEl.textContent = (q.bundle && (!q.color || !q.color2))
         ? "Choose both colors to see your total."
-        : "Choose pickup or shipping to see your total.";
+        : "Enter your name, email, and shipping address to see your total.";
       disablePay();
       return;
     }
 
     checkoutSubtotal.textContent = formatMoney(q.subtotal);
-    checkoutShipping.textContent = q.shipping ? formatMoney(q.ship) : "Free";
+    checkoutShipping.textContent = formatMoney(q.ship);
 
     if (!q.taxKnown) {
-      checkoutTax.textContent = "—";
-      checkoutTotal.textContent = "—";
-      totalEl.textContent = "Enter your state and ZIP to see your total.";
-      disablePay();
-      return;
-    }
-
-    if (q.shipping && (!q.shipName || !q.street || !q.city || !validZip(q.zip))) {
-      checkoutTax.textContent = formatMoney(q.tax);
-      checkoutTotal.textContent = formatMoney(q.total);
-      totalEl.textContent = "Enter your name and shipping address to finish checkout.";
+      checkoutTax.textContent = "\u2014";
+      checkoutTotal.textContent = "\u2014";
+      totalEl.textContent = "Enter your name, email, and shipping address to see your total.";
       disablePay();
       return;
     }
 
     checkoutTax.textContent = formatMoney(q.tax);
     checkoutTotal.textContent = formatMoney(q.total);
-    if (q.shipping) {
-      totalEl.textContent = "Total: " + formatMoney(q.total) + " shipped to " + q.state + " " + q.zip + ".";
-    } else {
-      totalEl.textContent = "Total: " + formatMoney(q.total) + " for local pickup in Austin.";
+
+    if (!q.shipName || !validEmail(q.email) || !q.street || !q.city || !validZip(q.zip)) {
+      totalEl.textContent = "Enter your name, email, and shipping address to finish checkout.";
+      disablePay();
+      return;
     }
+
+    if (!q.ageConfirmed) {
+      totalEl.textContent = "Confirm you are 21 or older to finish checkout.";
+      disablePay();
+      return;
+    }
+
+    totalEl.textContent = "Total: " + formatMoney(q.total) + " shipped to " + q.state + " " + q.zip + ".";
     payLink.href = basePay + "/" + cashAppAmount(q.total);
     payLink.classList.remove("is-disabled");
     payLink.setAttribute("aria-disabled", "false");
   }
 
   form.addEventListener("change", sync);
-  nameInput.addEventListener("input", sync);
+  if (emailInput) emailInput.addEventListener("input", sync);
   if (shipNameInput) shipNameInput.addEventListener("input", sync);
   if (streetInput) streetInput.addEventListener("input", sync);
   if (cityInput) cityInput.addEventListener("input", sync);
   if (zipInput) zipInput.addEventListener("input", sync);
   if (stateInput) stateInput.addEventListener("change", sync);
+  if (ageInput) ageInput.addEventListener("change", sync);
 
   copyBtn.addEventListener("click", function () {
     var text = noteText();

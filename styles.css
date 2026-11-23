@@ -1,4 +1,4 @@
-/* Lomaferro — dark Purple Galaxy theme */
+/* Lomaferro — dark Galaxy Purple theme */
 
 :root {
   --bg: #07060c;
@@ -762,7 +762,6 @@ main,
 
 .ship-note,
 .pay-help,
-.pay-aside,
 .age-note {
   margin: 0.9rem 0 0;
   color: var(--muted);
@@ -919,7 +918,7 @@ main,
 
 .footer-legal {
   margin: 0;
-  max-width: 28rem;
+  max-width: 40rem;
   line-height: 1.55;
   letter-spacing: 0.01em;
   text-align: right;
@@ -1237,4 +1236,61 @@ main,
   font-size: 1rem;
   font-weight: 400;
   letter-spacing: 0;
+}
+
+.age-confirm {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.55rem;
+  cursor: pointer;
+}
+
+.age-confirm input {
+  margin-top: 0.3rem;
+  accent-color: var(--accent);
+}
+
+/* Standalone terms / privacy pages */
+
+.legal-doc {
+  padding-top: 2.5rem;
+}
+
+.legal-doc .policy-body h1 {
+  margin: 0;
+  font-family: var(--display);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-size: clamp(1.8rem, 4vw, 2.4rem);
+}
+
+.legal-doc .policy-body h2 {
+  margin: 1.75rem 0 0.5rem;
+  font-family: var(--display);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-size: 1.15rem;
+}
+
+.legal-doc .policy-body p {
+  margin: 0.65rem 0 0;
+  color: var(--muted);
+}
+
+.legal-doc .policy-body ul {
+  list-style: disc;
+  margin: 0.65rem 0 0 1.2rem;
+  padding: 0;
+  display: block;
+}
+
+.legal-doc .policy-body li {
+  margin: 0.35rem 0 0;
+}
+
+.legal-placeholder {
+  color: var(--accent);
+  font-weight: 600;
 }
