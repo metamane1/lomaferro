@@ -20,8 +20,14 @@
   <script>
     if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
     window.addEventListener('load', function () {
-      if (location.hash) history.replaceState(null, '', location.pathname + location.search);
-      window.scrollTo(0, 0);
+      var id = (location.hash || '').replace(/^#/, '');
+      var target = id && document.getElementById(id);
+      if (!target) {
+        window.scrollTo(0, 0);
+        return;
+      }
+      target.classList.add('is-in');
+      target.scrollIntoView();
     });
   </script>
   <noscript><style>.reveal{opacity:1!important;transform:none!important}</style></noscript>
@@ -57,7 +63,7 @@
         </h1>
         <p class="hero-tag">The rolling tray for legal tobacco and herbal blends, with a built-in ash tray.</p>
         <div class="hero-cta">
-          <p class="price"><span class="price-prefix">Starting at</span> $28.99 shipped</p>
+          <p class="price"><span class="price-prefix">Starting at</span> $28.99 <span class="price-suffix">shipped</span></p>
           <a class="btn" href="#order">Order</a>
         </div>
       </div>
@@ -118,12 +124,12 @@
       <article class="feature">
         <p class="feature-num">03</p>
         <h2>Side well</h2>
-        <p>A second round well beside the ash tray, for whatever you like to keep close.</p>
+        <p>A second round well next to the ash tray.</p>
       </article>
       <article class="feature">
         <p class="feature-num">04</p>
         <h2>Smooth, rounded design</h2>
-        <p>Smooth, rounded inside curves that are easy to empty.</p>
+        <p>Rounded inside curves that empty easily.</p>
       </article>
     </section>
 
@@ -131,9 +137,9 @@
       <div class="product-info">
         <p class="eyebrow">The Tray</p>
         <h2 id="product-heading">Lomaferro Rolling Tray</h2>
-        <p class="price"><span class="price-prefix">Starting at</span> $28.99 shipped</p>
+        <p class="price"><span class="price-prefix">Starting at</span> $28.99 <span class="price-suffix">shipped</span></p>
         <p class="availability">Galaxy Purple, Black, and White are in stock now and ship in 1 to 3 days. Other colors are made to order and ship in about 5 to 7 days.</p>
-        <p class="lede">Stop rolling on magazines and losing ash on the table. The Lomaferro Rolling Tray is a rolling tray for legal tobacco and herbal blends, with a built-in ash tray. It gives you a big, flat rolling area with raised walls that keep everything contained, plus a side well right beside it. One tray, no mess, made in Austin.</p>
+        <p class="lede">A rolling tray for legal tobacco and herbal blends, with a built-in ash tray. Wide deck, raised walls, and a side well. Made in Austin.</p>
         <dl class="dims">
           <dt>Dimensions</dt>
           <dd>
@@ -234,7 +240,7 @@
           </li>
           <li>
             <h3>In stock</h3>
-            <p>Galaxy Purple, Black, and White are in stock now. They ship in 1 to 3 days.</p>
+            <p>Galaxy Purple, Black, and White ship in 1 to 3 days.</p>
           </li>
           <li>
             <h3>Other colors</h3>
@@ -248,8 +254,7 @@
       <div class="order-intro">
         <p class="eyebrow">Order</p>
         <h2 id="order-heading">Get your tray</h2>
-        <p class="order-lead">Starting at $28.99 shipped in the lower 48, including $9 flat USPS. Galaxy Purple and Glow Green are $33.99 shipped.</p>
-        <p class="order-lead">Two-tray bundle: any two colors for $46.99 shipped in the lower 48 (one $9 shipping). Made-to-order colors add print time.</p>
+        <p class="order-lead">Starting at $28.99 shipped in the lower 48, including $9 flat USPS. Galaxy Purple and Glow Green are $33.99 shipped. Any two colors are $46.99 shipped (one $9 shipping). Made-to-order colors add print time.</p>
       </div>
 
       <form class="order-flow" id="order-form" action="#" method="get">
@@ -357,7 +362,7 @@
         <fieldset class="order-step" id="checkout">
           <legend>Step 3 — Review &amp; checkout</legend>
           <p class="checkout-item" id="checkout-item">Choose a color to review your order.</p>
-          <div class="note-builder" id="ship-fields">
+          <div class="note-builder address-fields" id="ship-fields">
             <label class="field">
               <span>Name</span>
               <input type="text" id="order-ship-name" name="ship-name" autocomplete="name" maxlength="80">
@@ -470,7 +475,7 @@
       <ul class="faq-list">
         <li class="faq-item">
           <h3>What is it?</h3>
-          <p>A rolling tray for legal tobacco and herbal blends, with a built-in ash tray. It has a wide, flat rolling area with raised walls, a built-in ash tray, and a side well, a second round well beside the ash tray for whatever you like to keep close. Smooth, rounded inside curves make it easy to empty.</p>
+          <p>A rolling tray for legal tobacco and herbal blends, with a built-in ash tray. Wide rolling area, raised walls, a side well, and rounded inside curves that empty easily.</p>
         </li>
         <li class="faq-item">
           <h3>What colors can I get?</h3>
@@ -520,7 +525,15 @@
       <span>Lomaferro</span>
       <span>Austin, Texas</span>
     </div>
-    <p class="footer-legal">For use with legal tobacco and herbal products. Sold to adults 21+ only. <a href="#policy">Returns &amp; Shipping</a> · <a href="terms.html">Terms</a> · <a href="privacy.html">Privacy</a> · Questions? <a href="mailto:wqq9zhc9@mail.grokbot.com">wqq9zhc9@mail.grokbot.com</a></p>
+    <div class="footer-meta">
+      <p class="footer-legal">For use with legal tobacco and herbal products. Sold to adults 21+ only.</p>
+      <nav class="footer-links" aria-label="Footer">
+        <a href="#policy">Returns &amp; Shipping</a>
+        <a href="terms.html">Terms</a>
+        <a href="privacy.html">Privacy</a>
+      </nav>
+      <p class="footer-contact">Questions? <a href="mailto:wqq9zhc9@mail.grokbot.com">wqq9zhc9@mail.grokbot.com</a></p>
+    </div>
   </footer>
 
   <script src="order.js" defer></script>
